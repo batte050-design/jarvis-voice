@@ -15,7 +15,8 @@ class AiService {
   static const String _defaultModel = 'deepseek-chat';
   static const String nvidiaBaseUrl = 'https://integrate.api.nvidia.com/v1';
   static const String nvidiaDefaultModel = 'z-ai/glm-5.2';
-  static const String jarvisShimBase = 'http://127.0.0.1:8140/v1';
+  static const String jarvisShimBase = String.fromEnvironment('JARVIS_SHIM_URL', defaultValue: 'http://127.0.0.1:8140') + '/v1';
+  static const String jarvisShimKey = String.fromEnvironment('JARVIS_SHIM_KEY', defaultValue: '');
 
   /// Free, general-purpose chat endpoints verified in NVIDIA's NIM catalog.
   /// The live /models response is intersected with this list so unavailable or

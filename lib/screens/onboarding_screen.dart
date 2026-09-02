@@ -175,7 +175,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       } else if (provider == 'jarvis') {
         _baseUrlController.text = AiService.jarvisShimBase;
         _modelController.text = 'jarvis';
-        _apiKeyController.text = 'jarvis';
+        _apiKeyController.text = AiService.jarvisShimKey;
       } else {
         _baseUrlController.clear();
         _modelController.clear();

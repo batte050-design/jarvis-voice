@@ -21,7 +21,7 @@ jobs:
         run: flutter pub get
 
       - name: Build release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --dart-define=JARVIS_SHIM_URL=https://api.battemohammad.com --dart-define=JARVIS_SHIM_KEY=${{ secrets.JARVIS_SHIM_KEY }}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

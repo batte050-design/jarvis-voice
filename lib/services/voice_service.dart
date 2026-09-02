@@ -10,7 +10,8 @@ class VoiceService {
   /// JARVIS shim base URL. This server speaks in the jarvis voice (Fish Audio)
   /// and hosts the brain. Replace with the deployed host at build time
   /// (localhost is for local development only).
-  static const String shimBase = 'http://127.0.0.1:8140';
+  static const String shimBase = String.fromEnvironment('JARVIS_SHIM_URL', defaultValue: 'http://127.0.0.1:8140');
+  static const String shimKey = String.fromEnvironment('JARVIS_SHIM_KEY', defaultValue: '');
 
   final stt.SpeechToText _speech = stt.SpeechToText();
   final FlutterTts _tts = FlutterTts(); // fallback when shim unreachable
@@ -75,7 +76,10 @@ class VoiceService {
       final resp = await http
           .post(
             Uri.parse('$shimBase/v1/audio/speech'),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $shimKey',
+            },
             body: jsonEncode({'input': text}),
           )
           .timeout(const Duration(seconds: 30));
