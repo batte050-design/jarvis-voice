@@ -172,6 +172,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       } else if (provider == 'local') {
         _baseUrlController.text = 'http://10.0.2.2:1234/v1';
         _modelController.text = 'qwen2.5-7b-instruct';
+      } else if (provider == 'jarvis') {
+        _baseUrlController.text = AiService.jarvisShimBase;
+        _modelController.text = 'jarvis';
+        _apiKeyController.text = 'jarvis';
       } else {
         _baseUrlController.clear();
         _modelController.clear();
@@ -199,6 +203,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
     if (_selectedProvider != 'ollama' &&
         _selectedProvider != 'local' &&
+        _selectedProvider != 'jarvis' &&
         apiKey.isEmpty) {
       setState(() {
         _validationError = 'API Key is required for this provider.';
@@ -211,7 +216,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       final models = await _aiService.fetchAvailableModels(baseUrl, apiKey);
       if (models.isNotEmpty ||
           _selectedProvider == 'ollama' ||
-          _selectedProvider == 'local') {
+          _selectedProvider == 'local' ||
+          _selectedProvider == 'jarvis') {
         await _aiService.saveSettings(
           apiKey: apiKey,
           baseUrl: baseUrl,
@@ -1115,6 +1121,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               physics: const BouncingScrollPhysics(),
               children: [
                 _buildProviderCard(
+                  'jarvis',
+                  'JARVIS',
+                  Icons.auto_awesome_rounded,
+                  isDark,
+                ),
+                const SizedBox(width: 10),
+                _buildProviderCard(
                   'deepseek',
                   'DeepSeek',
                   Icons.analytics_rounded,
@@ -1160,7 +1173,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               physics: const BouncingScrollPhysics(),
               children: [
                 if (_selectedProvider != 'ollama' &&
-                    _selectedProvider != 'local') ...[
+                    _selectedProvider != 'local' &&
+                    _selectedProvider != 'jarvis') ...[
                   _buildFormTextField(
                     controller: _apiKeyController,
                     label: 'API Key',
