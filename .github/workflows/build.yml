@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Generate launcher icons
+        run: dart run flutter_launcher_icons
+
       - name: Build release APK
         run: flutter build apk --release --dart-define=JARVIS_SHIM_URL=https://api.battemohammad.com --dart-define=JARVIS_SHIM_KEY=${{ secrets.JARVIS_SHIM_KEY }}
 

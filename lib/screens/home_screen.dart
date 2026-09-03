@@ -37,8 +37,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _isLoading = false;
   bool _isListening = false;
 
-  // Custom switch state: 'chat' or 'agent'
-  String _mode = 'chat';
 
   // Chat Session state tracking
   String _sessionId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -115,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final assistantIndex = _messages.length - 1;
 
     try {
-      final isAgent = _mode == 'agent';
+      final isAgent = true;
       final stream = _aiService
           .sendMessageStream(text.trim(), isAgentMode: isAgent)
           .timeout(
@@ -491,18 +489,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
             children: [
               TextSpan(
-                text: 'Private',
+                text: 'JARVIS',
                 style: TextStyle(
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w800,
                   color: Theme.of(context).colorScheme.primary,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const TextSpan(
-                text: 'Agent',
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: -0.5,
+                  letterSpacing: 1.0,
                 ),
               ),
             ],
@@ -559,8 +550,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
           Column(
             children: [
-              // Pill selector switcher
-              _buildModeSelector(isDark),
 
               // API key warning banner
               if (!_aiService.isConfigured)
@@ -1018,105 +1007,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _buildModeSelector(bool isDark) {
-    final activeBg = isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0);
-
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 12),
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: activeBg,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.06),
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildModeButton(
-              'chat',
-              'Chat',
-              Icons.chat_bubble_outline_rounded,
-              isDark,
-            ),
-            _buildModeButton(
-              'agent',
-              'Agent',
-              Icons.smart_toy_outlined,
-              isDark,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildModeButton(
-    String modeId,
-    String label,
-    IconData icon,
-    bool isDark,
-  ) {
-    final isSelected = _mode == modeId;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _mode = modeId;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(26),
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Colors.transparent,
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withOpacity(0.20),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 15,
-              color: isSelected
-                  ? Colors.white
-                  : (isDark
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF475569)),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected
-                    ? Colors.white
-                    : (isDark
-                          ? const Color(0xFF94A3B8)
-                          : const Color(0xFF475569)),
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildEmptyState(bool isDark) {
     final time = DateTime.now();
     String timeGreeting = 'Hello';
@@ -1130,19 +1020,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       timeGreeting = 'Hello.';
     }
 
-    final suggestions = _mode == 'chat'
-        ? [
-            'Write a professional email',
-            'Explain quantum computing simply',
-            'Brainstorm mobile app ideas',
-            'Write a poem about robots',
-          ]
-        : [
-            'Open YouTube and search for cats',
-            'Call Mom',
-            'Set volume to 80%',
-            'What\'s on my screen?',
-          ];
+    final suggestions = [
+      'Write a professional email',
+      'Open YouTube and search for cats',
+      'Call Mom',
+      'Set volume to 80%',
+      "What's on my screen?",
+      'Explain quantum computing simply',
+    ];
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),

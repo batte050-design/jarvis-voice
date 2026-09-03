@@ -472,67 +472,11 @@ class _SettingsScreenState extends State<SettingsScreen>
                 controller: _baseUrlController,
                 decoration: _buildInputDecoration(
                   labelText: 'API Base URL',
-                  hintText: 'https://api.deepseek.com',
+                  hintText: 'https://api.battemohammad.com/v1',
                   prefixIcon: const Icon(Icons.dns_rounded, size: 18),
                 ),
               ),
               const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  ActionChip(
-                    label: const Text(
-                      'Local Server',
-                      style: TextStyle(fontSize: 11),
-                    ),
-                    tooltip: 'For local Llama.cpp or LM Studio',
-                    onPressed: () =>
-                        _baseUrlController.text = 'http://192.168.1.X:8080/v1',
-                  ),
-                  ActionChip(
-                    label: const Text(
-                      'Ollama Cloud',
-                      style: TextStyle(fontSize: 11),
-                    ),
-                    onPressed: () {
-                      _baseUrlController.text = 'https://ollama.com/v1';
-                      _modelController.text = 'gemma3:4b';
-                    },
-                  ),
-                  ActionChip(
-                    label: const Text(
-                      'DeepSeek',
-                      style: TextStyle(fontSize: 11),
-                    ),
-                    onPressed: () =>
-                        _baseUrlController.text = 'https://api.deepseek.com',
-                  ),
-                  ActionChip(
-                    label: const Text('Groq', style: TextStyle(fontSize: 11)),
-                    onPressed: () => _baseUrlController.text =
-                        'https://api.groq.com/openai/v1',
-                  ),
-                  ActionChip(
-                    avatar: const Icon(Icons.memory_rounded, size: 16),
-                    label: const Text('NVIDIA', style: TextStyle(fontSize: 11)),
-                    tooltip: 'NVIDIA NIM free endpoints',
-                    onPressed: () {
-                      _baseUrlController.text = AiService.nvidiaBaseUrl;
-                      _modelController.text = AiService.nvidiaDefaultModel;
-                    },
-                  ),
-                  ActionChip(
-                    label: const Text('Custom', style: TextStyle(fontSize: 11)),
-                    tooltip: 'Clear fields',
-                    onPressed: () {
-                      _baseUrlController.clear();
-                      _apiKeyController.clear();
-                      _modelController.clear();
-                    },
-                  ),
-                ],
-              ),
               const SizedBox(height: 12),
               Row(
                 children: [
@@ -541,7 +485,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                       controller: _modelController,
                       decoration: _buildInputDecoration(
                         labelText: 'Model',
-                        hintText: 'deepseek-chat',
+                        hintText: 'jarvis',
                         prefixIcon: const Icon(
                           Icons.smart_toy_rounded,
                           size: 18,

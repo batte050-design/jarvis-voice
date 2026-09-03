@@ -11,8 +11,8 @@ class AiResponse {
 }
 
 class AiService {
-  static const String _defaultBaseUrl = 'https://api.deepseek.com';
-  static const String _defaultModel = 'deepseek-chat';
+  static const String _defaultBaseUrl = jarvisShimBase;
+  static const String _defaultModel = 'jarvis';
   static const String nvidiaBaseUrl = 'https://integrate.api.nvidia.com/v1';
   static const String nvidiaDefaultModel = 'z-ai/glm-5.2';
   static const String jarvisShimBase = String.fromEnvironment('JARVIS_SHIM_URL', defaultValue: 'http://127.0.0.1:8140') + '/v1';
@@ -20,7 +20,7 @@ class AiService {
 
   /// Free, general-purpose chat endpoints verified in NVIDIA's NIM catalog.
   /// The live /models response is intersected with this list so unavailable or
-  /// non-chat models never appear in PrivateAgent's NVIDIA model picker.
+  /// non-chat models never appear in JARVIS's NVIDIA model picker.
   static const List<String> nvidiaFreeChatModels = [
     'z-ai/glm-5.2',
     'nvidia/nemotron-3-nano-30b-a3b',
@@ -62,7 +62,7 @@ class AiService {
   final List<Map<String, String>> _conversationHistory = [];
 
   static const String _systemPrompt = '''
-You are PrivateAgent, a helpful AI assistant that controls an Android phone. You can perform device actions and also have normal conversations.
+You are JARVIS, a helpful AI assistant that controls an Android phone. You can perform device actions and also have normal conversations.
 
 When the user wants to perform a device action, you MUST respond with ONLY a JSON object (no markdown, no code fences, no extra text) in this exact format:
 {"action": "action_name", "params": {"key": "value"}, "response": "What you say to the user"}
@@ -102,7 +102,7 @@ For normal conversation (questions, chat, info requests), just respond with plai
 ''';
 
   static const String _chatSystemPrompt = '''
-You are PrivateAgent, a helpful conversational AI assistant. 
+You are JARVIS, a helpful conversational AI assistant. 
 Provide direct, natural, and friendly text responses. You cannot perform device actions or run tools. 
 Answer questions, explain concepts, brainstorm, write emails/messages, and chat with the user in plain text or markdown format.
 ''';
@@ -261,7 +261,7 @@ Answer questions, explain concepts, brainstorm, write emails/messages, and chat 
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $_apiKey',
               'HTTP-Referer': 'https://github.com/orailnoor/private-agent',
-              'X-Title': 'PrivateAgent',
+              'X-Title': 'JARVIS',
             },
             body: requestBody,
           )
@@ -360,7 +360,7 @@ Answer questions, explain concepts, brainstorm, write emails/messages, and chat 
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_apiKey',
         'HTTP-Referer': 'https://github.com/orailnoor/private-agent',
-        'X-Title': 'PrivateAgent',
+        'X-Title': 'JARVIS',
       });
 
       request.body = jsonEncode({
@@ -503,7 +503,7 @@ Answer questions, explain concepts, brainstorm, write emails/messages, and chat 
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer $_apiKey',
                 'HTTP-Referer': 'https://github.com/orailnoor/private-agent',
-                'X-Title': 'PrivateAgent',
+                'X-Title': 'JARVIS',
               },
               body: jsonEncode({
                 'model': _model,
@@ -562,7 +562,7 @@ Answer questions, explain concepts, brainstorm, write emails/messages, and chat 
         int delaySeconds = 3 * currentTry;
         developer.log(
           'API call failed ($e), retrying $currentTry/$maxRetries in $delaySeconds seconds...',
-          name: 'PrivateAgent',
+          name: 'JARVIS',
         );
         await Future.delayed(Duration(seconds: delaySeconds));
       }

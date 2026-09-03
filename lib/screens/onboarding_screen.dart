@@ -32,13 +32,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   bool _isOverlayGranted = false;
 
   // AI config states
-  String _selectedProvider = 'deepseek';
-  final TextEditingController _apiKeyController = TextEditingController();
+  String _selectedProvider = 'jarvis';
+  final TextEditingController _apiKeyController = TextEditingController(
+    text: AiService.jarvisShimKey,
+  );
   final TextEditingController _baseUrlController = TextEditingController(
-    text: 'https://api.deepseek.com',
+    text: AiService.jarvisShimBase,
   );
   final TextEditingController _modelController = TextEditingController(
-    text: 'deepseek-chat',
+    text: 'jarvis',
   );
   bool _obscureKey = true;
   bool _isValidating = false;
@@ -1124,43 +1126,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   'jarvis',
                   'JARVIS',
                   Icons.auto_awesome_rounded,
-                  isDark,
-                ),
-                const SizedBox(width: 10),
-                _buildProviderCard(
-                  'deepseek',
-                  'DeepSeek',
-                  Icons.analytics_rounded,
-                  isDark,
-                ),
-                const SizedBox(width: 10),
-                _buildProviderCard('groq', 'Groq', Icons.speed_rounded, isDark),
-                const SizedBox(width: 10),
-                _buildProviderCard(
-                  'nvidia',
-                  'NVIDIA',
-                  Icons.memory_rounded,
-                  isDark,
-                ),
-                const SizedBox(width: 10),
-                _buildProviderCard(
-                  'ollama',
-                  'Ollama',
-                  Icons.computer_rounded,
-                  isDark,
-                ),
-                const SizedBox(width: 10),
-                _buildProviderCard(
-                  'local',
-                  'Local Server',
-                  Icons.dns_rounded,
-                  isDark,
-                ),
-                const SizedBox(width: 10),
-                _buildProviderCard(
-                  'custom',
-                  'Custom',
-                  Icons.settings_suggest_rounded,
                   isDark,
                 ),
               ],
