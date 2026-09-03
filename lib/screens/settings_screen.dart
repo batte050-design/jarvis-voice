@@ -654,7 +654,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               const ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(Icons.auto_awesome_rounded),
-                title: Text('Version 2.1.0'),
+                title: Text('Version 2.2.0'),
               ),
             ],
           ),

@@ -19,11 +19,11 @@ void overlayMain() {
         scaffoldBackgroundColor: Colors.transparent,
         cardColor: Colors.white,
         dialogBackgroundColor: Colors.transparent,
-        primaryColor: const Color(0xFF4F46E5),
+        primaryColor: const Color(0xFF0891B2),
         useMaterial3: true,
         colorScheme: const ColorScheme.light(
           background: Colors.transparent,
-          primary: Color(0xFF4F46E5),
+          primary: Color(0xFF0891B2),
           surface: Colors.white,
           onSurface: Color(0xFF1E293B),
           onPrimary: Colors.white,
@@ -85,12 +85,12 @@ class JarvisApp extends StatelessWidget {
           themeMode: currentMode,
           theme: ThemeData(
             brightness: Brightness.light,
-            primaryColor: const Color(0xFF4F46E5), // Indigo-600
+            primaryColor: const Color(0xFF0891B2), // Indigo-600
             scaffoldBackgroundColor: const Color(
               0xFFF8FAFC,
             ), // Slate-50 background
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF4F46E5), // Indigo-600
+              primary: Color(0xFF0891B2), // Indigo-600
               secondary: Color(0xFF0EA5E9), // Sky-500
               surface: Color(0xFFFFFFFF),
               onSurface: Color(0xFF1E293B), // Slate-800
@@ -125,12 +125,12 @@ class JarvisApp extends StatelessWidget {
           ),
           darkTheme: ThemeData(
             brightness: Brightness.dark,
-            primaryColor: const Color(0xFF6366F1), // Indigo-500
+            primaryColor: const Color(0xFF22D3EE), // Indigo-500
             scaffoldBackgroundColor: const Color(
               0xFF0B0F19,
             ), // Midnight deep slate
             colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF6366F1), // Indigo-500
+              primary: Color(0xFF22D3EE), // Indigo-500
               secondary: Color(0xFF38BDF8), // Sky-400
               surface: Color(0xFF151D30), // Midnight gray-blue card background
               onSurface: Color(0xFFF8FAFC), // Slate-50 text

@@ -8,6 +8,7 @@ import '../services/ai_service.dart';
 import '../services/action_handler.dart';
 import '../services/voice_service.dart';
 import '../widgets/message_bubble.dart';
+import '../widgets/jarvis_hologram.dart';
 import '../services/telegram_service.dart';
 import '../services/chat_history_service.dart';
 import '../services/notification_service.dart';
@@ -36,6 +37,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
   bool _isListening = false;
+
+  // Hologram state
+  HologramState _hologramState = HologramState.idle;
+  String _ackText = '';
+  bool _showTranscript = false;
 
 
   // Chat Session state tracking
@@ -92,6 +98,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     await ChatHistoryService.saveSession(session);
   }
 
+  void _setHologram(HologramState s) {
+    if (mounted && _hologramState != s) {
+      setState(() => _hologramState = s);
+    }
+  }
+
+  String _ackFor(String text) {
+    final t = text.toLowerCase();
+    if (t.contains('news') || t.contains('brief')) return 'Fetching the latest, sir';
+    if (t.contains('search') || t.contains('find') || t.contains('look')) return 'Searching now, sir';
+    if (t.contains('weather')) return 'Checking the skies, sir';
+    if (t.contains('open') || t.contains('call') || t.contains('send') || t.contains('message')) return 'On it, sir';
+    return 'One moment, sir';
+  }
+
   Future<void> _sendMessage(String text) async {
     if (text.trim().isEmpty) return;
 
@@ -99,6 +120,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     setState(() {
       _messages.add(userMessage);
       _isLoading = true;
+      _hologramState = HologramState.thinking;
+      _ackText = _ackFor(text.trim());
     });
     _updateOverlayState();
     _textController.clear();
@@ -204,8 +227,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
         await _saveSession();
       } else {
-        // Plain text response, we already rendered it, just speak it
-        _voiceService.speak(accumulated);
+        // Plain text response — speak it, then return to idle
+        _setHologram(HologramState.speaking);
+        unawaited(_voiceService.speak(accumulated).then((_) {
+          if (mounted) _setHologram(HologramState.idle);
+        }));
       }
     } catch (e) {
       if (mounted) {
@@ -225,6 +251,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (mounted) {
         setState(() {
           _isLoading = false;
+          if (_hologramState == HologramState.thinking) {
+            _hologramState = HologramState.idle;
+          }
         });
         _scrollToBottom();
         _updateOverlayState();
@@ -301,10 +330,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (_isListening) {
       await _voiceService.stopListening();
       setState(() => _isListening = false);
+      _setHologram(HologramState.idle);
       return;
     }
 
     setState(() => _isListening = true);
+    _setHologram(HologramState.listening);
 
     await _voiceService.startListening(
       onResult: (text) {
@@ -313,6 +344,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       onDone: () {
         if (mounted) {
           setState(() => _isListening = false);
+          _setHologram(HologramState.idle);
         }
       },
     );
@@ -514,6 +546,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             tooltip: 'New chat',
             onPressed: _isLoading ? null : _startNewChat,
           ),
+          // Transcript / audio-first toggle
+          IconButton(
+            icon: Icon(
+              _showTranscript
+                  ? Icons.mic_none_rounded
+                  : Icons.chat_bubble_outline_rounded,
+            ),
+            tooltip: _showTranscript ? 'Audio mode' : 'Show transcript',
+            onPressed: () => setState(() => _showTranscript = !_showTranscript),
+          ),
           // Settings Action
           IconButton(
             icon: const Icon(Icons.settings_rounded),
@@ -607,23 +649,48 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                 ),
 
-              // Chat content area
-              Expanded(
-                child: _messages.isEmpty
-                    ? _buildEmptyState(isDark)
-                    : ListView.builder(
-                        controller: _scrollController,
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        itemCount: _messages.length,
-                        itemBuilder: (context, index) {
-                          return MessageBubble(message: _messages[index]);
-                        },
-                      ),
+              // JARVIS hologram (audio-first centrepiece)
+              Padding(
+                padding: const EdgeInsets.only(top: 6, bottom: 2),
+                child: Center(
+                  child: JarvisHologram(state: _hologramState, size: 190),
+                ),
               ),
+
+              // Instant ack status line (while thinking)
+              if (_hologramState == HologramState.thinking && _ackText.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    _ackText,
+                    style: const TextStyle(
+                      color: Color(0xFF00E5FF),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+
+              // Chat content area
+              if (_showTranscript)
+                Expanded(
+                  child: _messages.isEmpty
+                      ? _buildEmptyState(isDark)
+                      : ListView.builder(
+                          controller: _scrollController,
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          itemCount: _messages.length,
+                          itemBuilder: (context, index) {
+                            return MessageBubble(message: _messages[index]);
+                          },
+                        ),
+                )
+              else
+                const Spacer(),
 
               // Think loading indicator
               if (_isLoading)
@@ -641,7 +708,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.indigoAccent,
+                            const Color(0xFF22D3EE),
                           ),
                         ),
                       ),
