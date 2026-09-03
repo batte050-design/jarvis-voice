@@ -444,88 +444,6 @@ class _SettingsScreenState extends State<SettingsScreen>
             ],
           ),
 
-          // 2. AI Engine Config Card
-          _buildSettingsCard(
-            icon: Icons.psychology_outlined,
-            title: 'AI Engine Configuration',
-            subtitle: 'Supports any OpenAI-compatible API endpoint',
-            isDark: isDark,
-            children: [
-              TextField(
-                controller: _apiKeyController,
-                decoration: _buildInputDecoration(
-                  labelText: 'API Key',
-                  hintText: 'sk-...',
-                  prefixIcon: const Icon(Icons.key_rounded, size: 18),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureKey ? Icons.visibility_off : Icons.visibility,
-                      size: 18,
-                    ),
-                    onPressed: () => setState(() => _obscureKey = !_obscureKey),
-                  ),
-                ),
-                obscureText: _obscureKey,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _baseUrlController,
-                decoration: _buildInputDecoration(
-                  labelText: 'API Base URL',
-                  hintText: 'https://api.battemohammad.com/v1',
-                  prefixIcon: const Icon(Icons.dns_rounded, size: 18),
-                ),
-              ),
-              const SizedBox(height: 10),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _modelController,
-                      decoration: _buildInputDecoration(
-                        labelText: 'Model',
-                        hintText: 'jarvis',
-                        prefixIcon: const Icon(
-                          Icons.smart_toy_rounded,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: _fetchModels,
-                    icon: const Icon(
-                      Icons.cloud_download,
-                      size: 18,
-                      color: Colors.white,
-                    ),
-                    label: const Text(
-                      'Fetch',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
           // 3. Parameters & Tuning Card
           _buildSettingsCard(
             icon: Icons.tune_outlined,
@@ -630,18 +548,6 @@ class _SettingsScreenState extends State<SettingsScreen>
                 },
                 contentPadding: EdgeInsets.zero,
               ),
-              SwitchListTile(
-                title: const Text('Send System Prompt'),
-                subtitle: const Text('Turn off for custom LoRA fine-tunes'),
-                value: _useSystemPrompt,
-                onChanged: (bool value) {
-                  setState(() {
-                    _useSystemPrompt = value;
-                  });
-                  _autoSave();
-                },
-                contentPadding: EdgeInsets.zero,
-              ),
               if (FeatureFlags.floatingOverlayEnabled)
                 SwitchListTile(
                   title: const Text('Enable Floating Agent Icon'),
@@ -670,7 +576,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                       if (await FlutterOverlayWindow.isActive() == false) {
                         await FlutterOverlayWindow.showOverlay(
                           enableDrag: true,
-                          overlayTitle: "PrivateAgent",
+                          overlayTitle: "JARVIS",
                           overlayContent: "Floating Assistant",
                           flag: OverlayFlag.focusPointer,
                           alignment: OverlayAlignment.centerRight,
@@ -691,34 +597,6 @@ class _SettingsScreenState extends State<SettingsScreen>
                   },
                   contentPadding: EdgeInsets.zero,
                 ),
-            ],
-          ),
-
-          // 5. Telegram Remote Access Card
-          _buildSettingsCard(
-            icon: Icons.send_and_archive_outlined,
-            title: 'Telegram Remote Access',
-            subtitle: 'Control your agent remotely from anywhere',
-            isDark: isDark,
-            children: [
-              TextField(
-                controller: _telegramTokenController,
-                decoration: _buildInputDecoration(
-                  labelText: 'Telegram Bot Token',
-                  hintText: '123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11',
-                  prefixIcon: const Icon(Icons.send_rounded, size: 18),
-                ),
-              ),
-              SwitchListTile(
-                title: const Text('Enable Telegram Bot'),
-                subtitle: const Text('Allows remote control via Telegram chat'),
-                value: _telegramEnabled,
-                onChanged: (val) {
-                  setState(() => _telegramEnabled = val);
-                  _autoSave();
-                },
-                contentPadding: EdgeInsets.zero,
-              ),
             ],
           ),
 
@@ -766,54 +644,17 @@ class _SettingsScreenState extends State<SettingsScreen>
             ],
           ),
 
-          // 9. About / Links Card
+          // 9. About Card
           _buildSettingsCard(
             icon: Icons.info_outline_rounded,
-            title: 'About PrivateAgent',
-            subtitle: 'Resources and repository access',
+            title: 'About JARVIS',
+            subtitle: 'Your AI companion on Android',
             isDark: isDark,
             children: [
-              ListTile(
+              const ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Project Repository'),
-                subtitle: const Text('View source code on GitHub'),
-                leading: const Icon(Icons.code_rounded),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse('https://github.com/orailnoor/private-agent'),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Orailnoor on YouTube'),
-                subtitle: const Text('Subscribe for tutorials and updates'),
-                leading: const Icon(
-                  Icons.play_circle_fill_rounded,
-                  color: Colors.red,
-                ),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse('https://www.youtube.com/orailnoor'),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Tech Jarves on YouTube'),
-                subtitle: const Text('Subscribe for tutorials and updates'),
-                leading: const Icon(
-                  Icons.play_circle_fill_rounded,
-                  color: Colors.red,
-                ),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse('https://www.youtube.com/techjarves'),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
+                leading: Icon(Icons.auto_awesome_rounded),
+                title: Text('Version 2.1.0'),
               ),
             ],
           ),
@@ -1014,7 +855,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                 const SizedBox(height: 12),
                 if (!isRunning) ...[
                   const Text(
-                    'Tap below to open Accessibility Settings, then find "PrivateAgent Screen Control" and enable it.',
+                    'Tap below to open Accessibility Settings, then find "JARVIS Screen Control" and enable it.',
                     style: TextStyle(fontSize: 13),
                   ),
                   const SizedBox(height: 12),
